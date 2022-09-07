@@ -1,23 +1,25 @@
-import '@nomiclabs/hardhat-waffle';
 import '@nomiclabs/hardhat-ethers';
 import '@nomiclabs/hardhat-etherscan';
 import '@nomiclabs/hardhat-solhint';
-import '@typechain/hardhat';
+import '@nomiclabs/hardhat-waffle';
 import '@typechain/ethers-v5';
+import '@typechain/hardhat';
 import 'hardhat-gas-reporter';
 
 import { HardhatUserConfig } from 'hardhat/types';
-import { secretConfig, basicConfig } from './utils/config';
+import { envConfig } from './utils/config';
 
 const config: HardhatUserConfig = {
-  solidity: '0.8.11',
+  solidity: '0.8.16',
   networks: {
     hardhat: {},
-    mainnet: {
-      url: `https://mainnet.infura.io/v3/${secretConfig.infuraApiKey}`,
+    aurora: {
+      chainId: 1313161554,
+      url: `https://aurora-mainnet.infura.io/v3/${envConfig.infuraApiKey}`,
     },
-    ropsten: {
-      url: `https://ropsten.infura.io/v3/${secretConfig.infuraApiKey}`,
+    testnet: {
+      chainId: 1313161555,
+      url: `https://aurora-testnet.infura.io/v3/${envConfig.infuraApiKey}`,
     },
   },
   typechain: {
@@ -25,12 +27,12 @@ const config: HardhatUserConfig = {
     target: 'ethers-v5',
   },
   etherscan: {
-    apiKey: secretConfig.etherscanApiKey,
+    apiKey: envConfig.etherscanApiKey,
   },
   gasReporter: {
-    coinmarketcap: secretConfig.coinmarketcapApiKey,
+    coinmarketcap: envConfig.coinmarketcapApiKey,
     currency: 'USD',
-    enabled: basicConfig.reportGas,
+    enabled: envConfig.reportGas,
   },
 };
 
