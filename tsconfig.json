@@ -4,6 +4,7 @@
     "module": "commonjs",
     "strict": true,
     "esModuleInterop": true,
+    "moduleResolution": "node",
     "outDir": "./dist",
     "declaration": true,
     "removeComments": true,
@@ -11,7 +12,6 @@
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
     "sourceMap": true,
-    "baseUrl": "./",
     "incremental": true,
     "allowJs": true
   },
