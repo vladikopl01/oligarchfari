@@ -27,11 +27,11 @@ contract OligarchFari {
         string calldata name_,
         string calldata description_,
         uint256 endDate_
-    ) {
-        reqiure(bytes(name_).length != 0, "Empty name!");
-        reqiure(bytes(description_).length != 0, "Empty description!");
-        reqiure(msg.value > 0, "Invalid deposit!");
-        reqiure(endDate_ > block.timestamp, "Invalid end date!");
+    ) external payable {
+        require(bytes(name_).length != 0, "Empty name!");
+        require(bytes(description_).length != 0, "Empty description!");
+        require(msg.value > 0, "Invalid deposit!");
+        require(endDate_ > block.timestamp, "Invalid end date!");
 
         _cases.push(
             Report({
@@ -46,7 +46,7 @@ contract OligarchFari {
         );
     }
 
-    function report(string calldata description_, string calldata urlProofs) {
+    function report(string calldata description_, string calldata urlProofs) external {
         // Creates new reporter info with proofs to case
     }
 
