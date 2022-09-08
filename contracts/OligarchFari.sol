@@ -5,8 +5,7 @@ pragma solidity ^0.8.16;
 contract OligarchFari {
     enum Status {
         Closed,
-        Open,
-        Finished
+        Open
     }
 
     struct Case {
@@ -33,10 +32,8 @@ contract OligarchFari {
     modifier timedTransition(uint256 caseIndex_) {
         require(caseIndex_ < caseCounter, "Invalid case index!");
         Case storage _case = cases[caseIndex_];
-        if (_case.status == Status.Closed && block.timestamp >= _case.startDate && block.timestamp < _case.endDate) {
-            _case.status = Status.Open;
-        } else if ((_case.status == Status.Open || _case.status == Status.Closed) && block.timestamp >= _case.endDate) {
-            _case.status = Status.Finished;
+        if (_case.status == Status.Open && block.timestamp >= _case.endDate) {
+            _case.status = Status.Closed;
         }
         _;
     }
@@ -45,24 +42,22 @@ contract OligarchFari {
         string calldata name_,
         string calldata description_,
         uint256 deposit_,
-        uint256 startDate_,
         uint256 endDate_
     ) external payable {
         require(bytes(name_).length != 0, "Empty name!");
         require(bytes(description_).length != 0, "Empty description!");
         require(deposit_ > 0, "Insufficient deposit!");
         require(deposit_ == msg.value, "Deposit not equal to sended ether!");
-        require(startDate_ > block.timestamp, "Invalid start date!");
         require(endDate_ > block.timestamp, "Invalid end date!");
-        require(startDate_ < endDate_, "Start date is greater than end date!");
 
         Case storage _case = cases[caseCounter];
         _case.owner = msg.sender;
         _case.name = name_;
         _case.description = description_;
         _case.deposit = deposit_;
-        _case.startDate = startDate_;
+        _case.startDate = block.timestamp;
         _case.endDate = endDate_;
+        _case.status = Status.Open;
         caseCounter += 1;
     }
 
@@ -102,13 +97,15 @@ contract OligarchFari {
 
         _case.deposit -= amount_;
         _report.isApproved = true;
+
+        if (_case.deposit == 0) _case.status = Status.Closed;
     }
 
     function refund(uint256 caseIndex_) external timedTransition(caseIndex_) {
         Case storage _case = cases[caseIndex_];
         require(msg.sender == _case.owner, "You are not the owner!");
         require(_case.deposit != 0, "Nothing to refund!");
-        require(_case.status == Status.Finished, "Case status is not Finished!");
+        require(_case.status == Status.Closed, "Case status is not Closed!");
 
         (bool success, ) = msg.sender.call{value: _case.deposit}("");
         require(success, "Failed to send refund!");
@@ -116,11 +113,11 @@ contract OligarchFari {
         _case.deposit = 0;
     }
 
-    function finishCase(uint256 caseIndex_) external timedTransition(caseIndex_) {
+    function closeCase(uint256 caseIndex_) external timedTransition(caseIndex_) {
         Case storage _case = cases[caseIndex_];
         require(msg.sender == _case.owner, "You are not the owner!");
-        require(_case.status != Status.Finished, "Case status is already Finished!");
-        _case.status = Status.Finished;
+        require(_case.status != Status.Closed, "Case status is already Closed!");
+        _case.status = Status.Closed;
     }
 
     function getCase(uint256 caseIndex_)
