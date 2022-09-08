@@ -24,6 +24,7 @@ async function deployOligarchFari(): Promise<void> {
 
     const contract = await new OligarchFari__factory(wallet).deploy();
     await contract.deployed();
+    await contract.deployTransaction.wait(5);
 
     console.log(`Deployed to address: ${contract.address}`);
 
