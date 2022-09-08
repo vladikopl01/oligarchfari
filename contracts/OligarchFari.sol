@@ -146,6 +146,10 @@ contract OligarchFari {
         reports = _case.reports;
     }
 
+    function getCaseCounter() external view returns (uint256) {
+        return caseCounter;
+    }
+
     function getReport(uint256 caseIndex_, uint256 reportIndex_)
         external
         view
