@@ -13,7 +13,7 @@ const config: HardhatUserConfig = {
   solidity: '0.8.16',
   networks: {
     hardhat: {},
-    aurora: {
+    mainnet: {
       chainId: 1313161554,
       url: `https://aurora-mainnet.infura.io/v3/${envConfig.infuraApiKey}`,
     },
